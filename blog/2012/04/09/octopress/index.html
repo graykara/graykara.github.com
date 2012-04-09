@@ -5,13 +5,13 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>Beutiful Code</title>
+  <title>Octopress Setup - Beutiful Code</title>
   <meta name="author" content="graykara">
 
   
-  <meta name="description" content="주기적으로(최소한 하루 한 번) MySQL database 를 백업하기 위해 cron job 을 사용하여 매일 마다 백업 후, ftp 를 통해 특정 서버에 덤프파일을 업로드하도록 설정합니다. 실행환경 Ubuntu Server
-LFTP
-crontab LFTP &hellip;">
+  <meta name="description" content="프로그래머를 위한 블로그 프레임워크 Octopress 설치 방법을 기술합니다. 설치 환경은 Mac OSX 10.7.3 을 기준으로 합니다. Requirements GIT
+RVM
+RUBY 1.9.2 GIT 시스템에 port 혹은 homebrew 를 통해 git이 설치 &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -20,7 +20,7 @@ crontab LFTP &hellip;">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://blog.graykara.com">
+  <link rel="canonical" href="http://blog.graykara.com/blog/2012/04/09/octopress">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <script src="/javascripts/modernizr-2.0.js"></script>
@@ -64,176 +64,12 @@ crontab LFTP &hellip;">
 </nav>
   <div id="main">
     <div id="content">
-      <div class="blog-index">
+      <div>
+<article class="hentry" role="article">
   
-  
-  
-    <article>
-      
   <header>
     
-      <h1 class="entry-title"><a href="/blog/2012/04/09/mysql-remote-dump/">Mysql Remote Dump</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-04-09T17:15:00+09:00" pubdate data-updated="true">Apr 9<span>th</span>, 2012</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>주기적으로(최소한 하루 한 번) MySQL database 를 백업하기 위해 cron job 을 사용하여 매일 마다 백업 후, ftp 를 통해 특정 서버에 덤프파일을 업로드하도록 설정합니다.</p>
-
-<h2>실행환경</h2>
-
-<ul>
-<li>Ubuntu Server</li>
-<li>LFTP</li>
-<li>crontab</li>
-</ul>
-
-
-<h2>LFTP Install</h2>
-
-<p>커맨드라인 ftp 툴인 lftp 패키지를 사용하기 위해서 우선 lftp 를 설치합니다.</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>$ sudo apt-get install lftp</span></code></pre></td></tr></table></div></figure>
-
-
-<h2>MySQL 서버의 백업을 위한 shell script</h2>
-
-<p>쉘 스크립트는 아래의 코드와 같습니다.
-이를 통해서 /home/<em>username</em>/mysqldump/ 폴더에 특정 db 를 제외한 모든 데이터베이스의 덤프를 기록하고 FTP 서버에 업로드 됩니다.
-<strong>사용자명</strong>과 <strong>비밀번호</strong>는 스크립트를 사용하기 전에 설정해야 합니다.</p>
-
-<figure class='code'><figcaption><span>mysql.backup.sh  </span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="c">#!/bin/bash</span>
-</span><span class='line'><span class="c">### MySQL Server Login Info ###</span>
-</span><span class='line'><span class="nv">MUSER</span><span class="o">=</span><span class="s2">&quot;root&quot;</span>
-</span><span class='line'><span class="nv">MPASS</span><span class="o">=</span><span class="s2">&quot;&quot;</span>
-</span><span class='line'><span class="nv">MHOST</span><span class="o">=</span><span class="s2">&quot;localhost&quot;</span>
-</span><span class='line'><span class="nv">MYSQL</span><span class="o">=</span><span class="s2">&quot;$(which mysql)&quot;</span>
-</span><span class='line'><span class="nv">MYSQLDUMP</span><span class="o">=</span><span class="s2">&quot;$(which mysqldump)&quot;</span>
-</span><span class='line'><span class="nv">BAK</span><span class="o">=</span><span class="s2">&quot;/home/username/mysqldump&quot;</span>
-</span><span class='line'><span class="nv">GZIP</span><span class="o">=</span><span class="s2">&quot;$(which gzip)&quot;</span>
-</span><span class='line'><span class="c">### FTP SERVER Login info ###</span>
-</span><span class='line'><span class="nv">FTPU</span><span class="o">=</span><span class="s2">&quot;ftp_user_name&quot;</span>
-</span><span class='line'><span class="nv">FTPP</span><span class="o">=</span><span class="s2">&quot;ftp_password&quot;</span>
-</span><span class='line'><span class="nv">FTPS</span><span class="o">=</span><span class="s2">&quot;ftp_address&quot;</span>
-</span><span class='line'><span class="nv">NOW</span><span class="o">=</span><span class="k">$(</span>date +<span class="s2">&quot;%d-%m-%Y&quot;</span><span class="k">)</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">[</span> ! -d <span class="nv">$BAK</span> <span class="o">]</span> <span class="o">&amp;&amp;</span> mkdir -p <span class="nv">$BAK</span> <span class="o">||</span> /bin/rm -f <span class="nv">$BAK</span>/*
-</span><span class='line'>
-</span><span class='line'><span class="nv">DBS</span><span class="o">=</span><span class="s2">&quot;$($MYSQL -u $MUSER -h $MHOST -Bse &#39;show databases&#39;)&quot;</span>
-</span><span class='line'><span class="k">for </span>db in <span class="nv">$DBS</span>
-</span><span class='line'><span class="k">do</span>
-</span><span class='line'><span class="k"> if</span> <span class="o">[</span> <span class="nv">$db</span> !<span class="o">=</span> <span class="s2">&quot;information_schema&quot;</span> <span class="o">]</span> <span class="o">&amp;&amp;</span> <span class="o">[</span> <span class="nv">$db</span> !<span class="o">=</span> <span class="s2">&quot;mysql&quot;</span> <span class="o">]</span> <span class="o">&amp;&amp;</span> <span class="o">[</span> <span class="nv">$db</span> !<span class="o">=</span> <span class="s2">&quot;dbname&quot;</span> <span class="o">]</span>
-</span><span class='line'> <span class="k">then</span>
-</span><span class='line'><span class="k">   </span><span class="nv">FILE</span><span class="o">=</span><span class="nv">$BAK</span>/<span class="nv">$db</span>.<span class="nv">$NOW</span>-<span class="k">$(</span>date +<span class="s2">&quot;%T&quot;</span><span class="k">)</span>.gz
-</span><span class='line'>   <span class="nv">$MYSQLDUMP</span> -u <span class="nv">$MUSER</span> -h <span class="nv">$MHOST</span> <span class="nv">$db</span> | <span class="nv">$GZIP</span> -9 &gt; <span class="nv">$FILE</span>
-</span><span class='line'> <span class="k">fi</span>
-</span><span class='line'><span class="k">done</span>
-</span><span class='line'><span class="k"> </span>
-</span><span class='line'>lftp -u <span class="nv">$FTPU</span>,<span class="nv">$FTPP</span> -e <span class="s2">&quot;mkdir ./$NOW;cd ./$NOW; mput ./mysqldump/*; quit&quot;</span> <span class="nv">$FTPS</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>/home/<em>username</em>/mysql.backup.sh 로 저장한 후에, 실행 권한을 줍니다.</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>$ chmod +x ~/mysql.backup.sh</span></code></pre></td></tr></table></div></figure>
-
-
-<p>최초 백업을 위해서 쉘 스크립트를 실행합니다.</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>$ ./mysql.backup.sh</span></code></pre></td></tr></table></div></figure>
-
-
-<h2>cron job 으로 MySQL 백업 자동화</h2>
-
-<p>cron job 에 작업을 등록하여 매일 정해진 시간에 위의 작업이 이루어질 수 있도록 합니다.</p>
-
-<p>crontab 편집기를 실행하여 아래와 같이 설정합니다.</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>$ crontab -e</span></code></pre></td></tr></table></div></figure>
-
-
-
-
-<figure class='code'><figcaption><span>crontab</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>00 04 * * /home/username/mysql.backup.sh &gt; /dev/null 2&gt;&amp;1
-</span></code></pre></td></tr></table></div></figure>
-
-
-<h2>결과물</h2>
-
-<p>이로써 MySQL database Server 의 데이터베이스를 매일 백업해서 압축된 덤프파일을 특정 FTP 서버로 업로드 되도록 하는 작업이 완료되었습니다.</p>
-
-<ol>
-<li>SQL database Server 의 덤프폴더에는 데이터베이스명.%d-%m-%Y-%T.gz 형태의 압축된 백업 파일이 생성될 됩니다.</li>
-<li>압축된 백업파일은 특정 FTP 서버에 날짜별 폴더를 만든 후, 각각 업로드 됩니다.</li>
-<li>다음 날, 새롭게 백업 파일을 만들 때 이전 백업파일이 존재하면 해당 내용은 삭제하여 MySQL database Server 상에는 데이터베이스 별로 최신 백업파일 하나만이 존재하게 됩니다.</li>
-</ol>
-
-
-<p>이후, 특정 FTP 서버로 전송된 백업 파일은 외부 저장소에 주기적으로 2차 백업을 하여 데이터베이스 보존에 심혈을 기울여야할 것 입니다.</p>
-</div>
-  
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2012/04/09/octopress/">Octopress Setup</a></h1>
+      <h1 class="entry-title">Octopress Setup</h1>
     
     
       <p class="meta">
@@ -256,7 +92,7 @@ crontab LFTP &hellip;">
   </header>
 
 
-  <div class="entry-content"><p><strong>프로그래머를 위한 블로그 프레임워크 Octopress</strong> 설치 방법을 기술합니다.</p>
+<div class="entry-content"><p><strong>프로그래머를 위한 블로그 프레임워크 Octopress</strong> 설치 방법을 기술합니다.</p>
 
 <p>설치 환경은 Mac OSX 10.7.3 을 기준으로 합니다.</p>
 
@@ -435,18 +271,59 @@ crontab LFTP &hellip;">
 
 <h2>Blogging Basics</h2>
 </div>
+
+
+  <footer>
+    <p class="meta">
+      
   
+
+<span class="byline author vcard">Posted by <span class="fn">graykara</span></span>
+
+      
+
+
+
+
+
+
+
+
   
 
 
-    </article>
+<time datetime="2012-04-09T15:57:00+09:00" pubdate data-updated="true">Apr 9<span>th</span>, 2012</time>
+      
+
+<span class="categories">
   
-  <div class="pagination">
+    <a class='category' href='/blog/categories/octopress/'>octopress</a>, <a class='category' href='/blog/categories/setup/'>setup</a>
+  
+</span>
+
+
+    </p>
     
-    <a href="/blog/archives">Blog Archives</a>
-    
-  </div>
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://blog.graykara.com/blog/2012/04/09/octopress/" data-via="" data-counturl="http://blog.graykara.com/blog/2012/04/09/octopress/" >Tweet</a>
+  
+  
+  
 </div>
+
+    
+    <p class="meta">
+      
+      
+        <a class="basic-alignment right" href="/blog/2012/04/09/mysql-remote-dump/" title="Next Post: mysql remote dump">mysql remote dump &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+</div>
+
 <aside class="sidebar">
   
     <section>
@@ -471,6 +348,7 @@ crontab LFTP &hellip;">
 
   
 </aside>
+
 
     </div>
   </div>
