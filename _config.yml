@@ -2,10 +2,10 @@
 #      Main Configs       #
 # ----------------------- #
 
-url: http://graykara.github.com
-title: My Octopress Blog
+url: http://blog.graykara.com
+title: Beutiful Code
 subtitle: A blogging framework for hackers.
-author: Your Name
+author: graykara
 simple_search: http://google.com/search
 description:
 
