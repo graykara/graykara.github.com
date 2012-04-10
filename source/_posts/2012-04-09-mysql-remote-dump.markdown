@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "mysql remote dump"
+title: "MySQL DB 덤프 원격 자동 백업"
 date: 2012-04-09 17:15
 comments: true
 categories: 
