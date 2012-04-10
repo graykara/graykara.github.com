@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Code Blog]]></title>
-  <link href="http://blog.graykara.com/atom.xml" rel="self"/>
-  <link href="http://blog.graykara.com/"/>
-  <updated>2012-04-10T13:18:38+09:00</updated>
-  <id>http://blog.graykara.com/</id>
+  <link href="http://blog.graykara.co.kr/atom.xml" rel="self"/>
+  <link href="http://blog.graykara.co.kr/"/>
+  <updated>2012-04-10T16:08:01+09:00</updated>
+  <id>http://blog.graykara.co.kr/</id>
   <author>
     <name><![CDATA[graykara]]></name>
     
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[mysql remote dump]]></title>
-    <link href="http://blog.graykara.com/blog/2012/04/09/mysql-remote-dump/"/>
+    <link href="http://blog.graykara.co.kr/blog/2012/04/09/mysql-remote-dump/"/>
     <updated>2012-04-09T17:15:00+09:00</updated>
-    <id>http://blog.graykara.com/blog/2012/04/09/mysql-remote-dump</id>
+    <id>http://blog.graykara.co.kr/blog/2012/04/09/mysql-remote-dump</id>
     <content type="html"><![CDATA[<p>주기적으로(최소한 하루 한 번) MySQL database 를 백업하기 위해 cron job 을 사용하여 매일 마다 백업 후, ftp 를 통해 특정 서버에 덤프파일을 업로드하도록 설정합니다.</p>
 
 <h2>실행환경</h2>
